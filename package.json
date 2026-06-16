@@ -1,0 +1,23 @@
+{
+  "name": "clever",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CLEVER — AI-driven accounting SaaS for THECLEVEREST Consulting (full-stack Next.js, local MVP)",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @clever/web-client",
+    "build": "npm run build -w @clever/web-client",
+    "start": "npm run start -w @clever/web-client",
+    "db:generate": "npm run db:generate -w @clever/web-client",
+    "db:migrate": "npm run db:migrate -w @clever/web-client",
+    "db:seed": "npm run db:seed -w @clever/web-client",
+    "db:reset": "npm run db:reset -w @clever/web-client",
+    "test": "npm run test -w @clever/fiscal-engine"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

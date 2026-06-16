@@ -1,0 +1,169 @@
+// CLEVER — Prisma schema (local MVP).
+// Provider is SQLite for local, no-Docker development. To move to the
+// server-backed phase, change `provider` to "postgresql" and point DATABASE_URL
+// at Postgres — the models below are Postgres-compatible as written.
+//
+// SQLite notes: no native enums or string arrays, so role/type/status are
+// stored as String (validated in code via src/lib/enums.ts) and `keywords`
+// is a JSON string. Money is stored as Float (XAF has no minor unit).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String // bcrypt hash
+  role      String // MANAGER_N2 | HR | EMPLOYEE | TRAINEE | CLIENT_INDIVIDUAL | CLIENT_COMPANY
+  name      String
+  onboardingCompleted Boolean @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // A client-role user belongs to a ClientAccount (company may have several).
+  clientAccountId String?
+  clientAccount   ClientAccount? @relation("PortalUsers", fields: [clientAccountId], references: [id])
+
+  // Staff users can be assigned to client folders.
+  assignedClients ClientAccount[] @relation("AssignedStaff")
+  uploadedDocs    Document[]
+  validations     Validation[]
+  auditLogs       AuditLog[]
+  chatMessages    ChatMessage[]
+}
+
+model ClientAccount {
+  id               String    @id @default(uuid())
+  name             String
+  type             String // INDIVIDUAL | COMPANY
+  email            String    @unique
+  phone            String? // WhatsApp number with country code
+  country          String    @default("CM")
+  subscriptionTier String    @default("DECLARANT_SOLO") // DECLARANT_SOLO | COMPTABLE_PRO | GRAND_COMPTE
+  documentCount    Int       @default(0) // current billing-month count
+  monthResetAt     DateTime // first day of current billing month
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  assignedStaff   User?   @relation("AssignedStaff", fields: [assignedStaffId], references: [id])
+  assignedStaffId String?
+
+  portalUsers   User[]         @relation("PortalUsers")
+  documents     Document[]
+  qboConnection QboConnection?
+  chatMessages  ChatMessage[]
+}
+
+model Document {
+  id           String    @id @default(uuid())
+  clientId     String
+  uploadedById String?
+  source       String // WHATSAPP | PORTAL | STAFF
+  status       String    @default("PENDING_OCR") // PENDING_OCR | PENDING_VALIDATION | APPROVED | REJECTED | PUSHED_TO_QBO | QBO_ERROR
+  filePath     String
+  fileName     String
+  mimeType     String
+  fileSize     Int
+
+  // OCR results (mock in local MVP)
+  vendor        String?
+  amount        Float?
+  currency      String?
+  date          DateTime?
+  vatAmount     Float?
+  vatRate       Float?
+  description   String?
+  sysohadaCode  String?
+  sysohadaLabel String?
+  ocrConfidence Float?
+  needsReview   Boolean   @default(false)
+
+  // WhatsApp metadata
+  waMessageId   String? @unique
+  waPhoneNumber String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  client      ClientAccount @relation(fields: [clientId], references: [id])
+  uploadedBy  User?         @relation(fields: [uploadedById], references: [id])
+  validation  Validation?
+  chatMessages ChatMessage[]
+}
+
+model Validation {
+  id            String   @id @default(uuid())
+  documentId    String   @unique
+  validatedById String
+  action        String // APPROVED | REJECTED | EDITED
+  notes         String?
+  finalAmount   Float?
+  finalCode     String?
+  createdAt     DateTime @default(now())
+
+  document    Document @relation(fields: [documentId], references: [id])
+  validatedBy User     @relation(fields: [validatedById], references: [id])
+}
+
+model QboConnection {
+  id           String   @id @default(uuid())
+  clientId     String   @unique
+  realmId      String   @unique
+  accessToken  String // encrypted in server-backed phase
+  refreshToken String
+  tokenExpiry  DateTime
+  environment  String   @default("sandbox")
+  isActive     Boolean  @default(true)
+  demo         Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  client ClientAccount @relation(fields: [clientId], references: [id])
+}
+
+model SysohadaAccount {
+  code     String  @id // e.g. "6064"
+  label    String
+  class    Int // 1–9
+  parent   String?
+  keywords String  @default("[]") // JSON-encoded string[]
+}
+
+// Secure client ↔ assigned-staff messaging (Module 9). MVP: DB-backed, polled
+// every 10s by the client (no WebSocket). A message may reference a Document.
+model ChatMessage {
+  id         String   @id @default(uuid())
+  clientId   String
+  senderId   String
+  fromStaff  Boolean  @default(false) // true = staff author, false = client author
+  content    String
+  documentId String?
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  client   ClientAccount @relation(fields: [clientId], references: [id])
+  sender   User          @relation(fields: [senderId], references: [id])
+  document Document?     @relation(fields: [documentId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String?
+  actorName String
+  action    String // e.g. VALIDATION_APPROVED, DOCUMENT_UPLOADED, QBO_PUSH
+  entity    String // Document | ClientAccount | ...
+  entityId  String
+  detail    String? // human-readable summary
+  createdAt DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id])
+}

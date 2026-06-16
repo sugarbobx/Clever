@@ -1,0 +1,29 @@
+node_modules/
+dist/
+.next/
+out/
+build/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# prisma / sqlite
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+apps/web-client/prisma/dev.db*
+
+# uploads
+apps/web-client/data/uploads/*
+!apps/web-client/data/uploads/.gitkeep
+
+# logs / os
+*.log
+.DS_Store
+Thumbs.db
+
+# build info
+*.tsbuildinfo
