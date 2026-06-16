@@ -127,7 +127,7 @@ export function NotificationCenter({ area }: { area: "staff" | "client" }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 z-50 mt-1 w-80 overflow-hidden rounded-lg border border-border bg-surface shadow-xl">
+        <div className="absolute right-0 z-50 mt-1 w-80 max-w-[calc(100vw-1rem)] overflow-hidden rounded-lg border border-border bg-surface shadow-xl">
           <div className="flex items-center justify-between border-b border-border px-3 py-2">
             <p className="text-sm font-semibold text-slate-100">Notifications</p>
             {unread > 0 && (

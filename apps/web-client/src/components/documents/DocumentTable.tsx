@@ -25,7 +25,7 @@ export function DocumentTable({
 }) {
   const allChecked = selectable && docs.length > 0 && docs.every((d) => selected?.has(d.id));
   return (
-    <div className="overflow-hidden rounded-xl border border-border">
+    <div className="overflow-x-auto rounded-xl border border-border">
       <table className="w-full text-left text-sm">
         <thead className="bg-surface text-xs uppercase tracking-wide text-muted">
           <tr>

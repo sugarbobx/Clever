@@ -20,7 +20,7 @@ interface ChatMsg {
  * 10s. Pass `clientId` when viewing as staff; omit it for the client's own
  * thread. "Mine" bubbles are decided by whether the viewer is staff.
  */
-export function ChatThread({ clientId, heightClass = "h-[60vh]" }: { clientId?: string; heightClass?: string }) {
+export function ChatThread({ clientId, heightClass = "h-[50vh] md:h-[60vh]" }: { clientId?: string; heightClass?: string }) {
   const { user } = useAuth();
   const isStaffViewer = user ? STAFF_ROLES.includes(user.role) : false;
   const query = clientId ? `?clientId=${encodeURIComponent(clientId)}` : "";

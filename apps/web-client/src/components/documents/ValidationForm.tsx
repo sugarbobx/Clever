@@ -189,7 +189,7 @@ export function ValidationForm({
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         {/* LEFT — fixed: preview + confidence + category + assignment */}
         <div className="space-y-4">
           <div className="card">
@@ -632,7 +632,7 @@ function OcrTab({
           <label className="label">Fournisseur</label>
           <input className="input" value={vendor} onChange={(e) => setVendor(e.target.value)} disabled={!canEdit} />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className="label">Montant (XAF)</label>
             <input
@@ -648,7 +648,7 @@ function OcrTab({
             <input className="input" type="date" value={dateStr} onChange={(e) => setDateStr(e.target.value)} disabled={!canEdit} />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className="label">Montant TVA (XAF)</label>
             <input

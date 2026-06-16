@@ -49,7 +49,7 @@ export default function ClientsPage() {
       ) : clients.length === 0 ? (
         <EmptyState icon={<Users size={32} />} title="Aucun client" desc="Ajoutez votre premier client pour commencer." />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border">
+        <div className="overflow-x-auto rounded-xl border border-border">
           <table className="w-full text-left text-sm">
             <thead className="bg-surface text-xs uppercase tracking-wide text-muted">
               <tr>

@@ -296,7 +296,7 @@ function ManagerDashboard({
   return (
     <div className="space-y-6">
       {/* Métriques top */}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         <Metric label="Clients" value={mgr.totalClients} icon={<Users size={16} />} />
         <Metric label="MRR estimé" value={formatXAF(stats.estimatedMrrXaf)} icon={<Gauge size={16} />} accent />
         <Metric label="File d'attente" value={stats.pendingValidation} icon={<Inbox size={16} />} />
@@ -305,14 +305,14 @@ function ManagerDashboard({
       </div>
 
       {/* 3 colonnes */}
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <PortefeuilleColumn clients={mgr.clients} alerts={mgr.alerts} />
         <FileColumn pending={pending} />
         <EquipeColumn team={team} activity={mgr.activity} />
       </div>
 
       {/* Revenus par tier + alertes dirigeant */}
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div className="card lg:col-span-2">
           <p className="mb-4 text-sm font-semibold text-slate-200">Revenus par forfait</p>
           <RevenueByTier clientsByTier={mgr.clientsByTier} />
@@ -773,7 +773,7 @@ function EmployeeDashboard({
   return (
     <div className="space-y-6">
       {/* Métriques */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Metric label="File d'attente" value={stats.pendingValidation} icon={<Inbox size={16} />} accent />
         <Metric label="Validés" value={validated.length || stats.pushedToQbo} icon={<CheckCircle2 size={16} />} />
         <Metric label="Clients" value={clients.length} icon={<Users size={16} />} />
@@ -948,7 +948,7 @@ function TraineeDashboard({ stats, pending }: { stats: StaffStats; pending: Docu
       </div>
 
       {/* Métriques */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Metric label="Tâches aujourd'hui" value={pending.length} icon={<Target size={16} />} accent />
         <Metric label="Brouillons" value={DEMO_DRAFTS.length} icon={<FileText size={16} />} demo />
         <Metric label="Validés / mois" value={stats.pushedToQbo} icon={<CheckCircle2 size={16} />} />
@@ -1083,7 +1083,7 @@ function TraineeDashboard({ stats, pending }: { stats: StaffStats; pending: Docu
               <p className="text-sm font-semibold text-slate-200">Ma progression</p>
               <DemoBadge />
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <Metric label="Précision" value="91%" icon={<Gauge size={16} />} />
               <Metric label="Corrections" value={12} icon={<Pencil size={16} />} />
               <Metric label="Vitesse moy." value="3,2 min" icon={<Activity size={16} />} />
