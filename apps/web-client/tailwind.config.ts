@@ -5,20 +5,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // CLEVER dark theme + blue accents (per instructions)
-        bg: "#0f172a",
-        surface: "#1e293b",
-        "surface-2": "#273449",
-        border: "#334155",
+        // Palette inspirée de THECLEVEREST Consulting (tcc-sarl.com) :
+        // base bleu nuit profond #0d141a + accent sarcelle (teal) #2a9d8f.
+        bg: "#0d141a",
+        surface: "#152028",
+        "surface-2": "#1e2c36",
+        border: "#2a3a45",
         primary: {
-          DEFAULT: "#3b82f6",
-          hover: "#2563eb",
-          soft: "#1d4ed8",
+          DEFAULT: "#2a9d8f",
+          hover: "#249284",
+          soft: "#1d7a6e",
         },
-        muted: "#94a3b8",
+        muted: "#8d9ba6",
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Open Sans", "system-ui", "sans-serif"],
+        heading: ["Lato", "Open Sans", "system-ui", "sans-serif"],
       },
     },
   },

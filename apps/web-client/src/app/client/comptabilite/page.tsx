@@ -500,7 +500,7 @@ function MonthlyTimeline({
   return (
     <div className="card">
       <p className="mb-4 text-sm font-semibold text-slate-200">Mon suivi mensuel <DemoBadge /></p>
-      <div className="grid grid-cols-6 gap-2">
+      <div className="grid grid-cols-6 gap-2 overflow-x-auto [grid-auto-columns:minmax(56px,1fr)] sm:overflow-visible">
         {months.map((m) => (
           <button
             key={m.key}

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Open+Sans:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -8,7 +8,10 @@
   html,
   body {
     @apply bg-bg text-slate-100 antialiased;
-    font-family: "Inter", system-ui, sans-serif;
+    font-family: "Open Sans", system-ui, sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Lato", "Open Sans", system-ui, sans-serif;
   }
 }
 

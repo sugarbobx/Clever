@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#0f172a"/>
-  <rect x="96" y="96" width="320" height="320" rx="64" fill="#3b82f6"/>
+  <rect width="512" height="512" fill="#0d141a"/>
+  <rect x="96" y="96" width="320" height="320" rx="64" fill="#2a9d8f"/>
   <text x="50%" y="52%" dominant-baseline="central" text-anchor="middle"
     font-family="Inter, Segoe UI, Arial, sans-serif" font-size="200" font-weight="800" fill="#ffffff">C</text>
 </svg>
