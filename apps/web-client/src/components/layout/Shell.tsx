@@ -100,7 +100,7 @@ export function Shell({ area, children }: { area: "staff" | "client"; children: 
 
       {/* Main */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-border bg-surface/40 px-6 py-3">
+        <header className="flex items-center justify-between border-b border-border bg-surface/40 px-3 py-2 md:px-6 md:py-3">
           <div className="md:hidden">
             <Logo />
           </div>

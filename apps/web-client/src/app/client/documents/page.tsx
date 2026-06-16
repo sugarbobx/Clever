@@ -83,7 +83,7 @@ export default function ClientDocumentsPage() {
           desc="Cliquez sur « Envoyer un document » pour téléverser votre premier reçu."
         />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border">
+        <div className="overflow-x-auto rounded-xl border border-border">
           <table className="w-full text-left text-sm">
             <thead className="bg-surface text-xs uppercase tracking-wide text-muted">
               <tr>

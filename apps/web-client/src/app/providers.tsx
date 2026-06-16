@@ -9,7 +9,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={client}>
       {children}
-      <Toaster theme="dark" position="top-right" richColors />
+      <Toaster theme="dark" position="top-center" richColors />
     </QueryClientProvider>
   );
 }

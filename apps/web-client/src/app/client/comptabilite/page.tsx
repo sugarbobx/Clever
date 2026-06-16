@@ -157,7 +157,7 @@ function ComptaDashboard() {
       <CompletudeBar month={moisActuel} pct={completude} missing={missing} />
 
       {/* §1 — Barre d'état (5 cartes santé) */}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         <StatCard label="Revenus YTD" value={formatXAF(revenusYtd)} trend={12} badge={{ level: "green", text: "Positif" }} demo />
         <StatCard
           label="Charges YTD"
@@ -188,7 +188,7 @@ function ComptaDashboard() {
         </div>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         {/* Gauche — revenus & charges */}
         <div className="card">
           <p className="mb-3 text-sm font-semibold text-slate-200">Revenus &amp; charges</p>
@@ -255,7 +255,7 @@ function ComptaDashboard() {
           )}
 
           {left === "charges" && (
-            <div className="mt-4 overflow-hidden rounded-lg border border-border">
+            <div className="mt-4 overflow-x-auto rounded-lg border border-border">
               {byAccount.length === 0 ? (
                 <p className="px-3 py-6 text-center text-sm text-muted">Aucune charge enregistrée.</p>
               ) : (
@@ -500,7 +500,7 @@ function MonthlyTimeline({
   return (
     <div className="card">
       <p className="mb-4 text-sm font-semibold text-slate-200">Mon suivi mensuel <DemoBadge /></p>
-      <div className="grid grid-cols-6 gap-2 overflow-x-auto [grid-auto-columns:minmax(56px,1fr)] sm:overflow-visible">
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
         {months.map((m) => (
           <button
             key={m.key}
