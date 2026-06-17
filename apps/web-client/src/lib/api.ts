@@ -5,6 +5,7 @@
  */
 // Same-origin: the API now lives inside this Next.js app under /api.
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "/api";
+const REQUEST_TIMEOUT_MS = 15_000;
 
 export interface ApiResult<T> {
   data: T | null;
@@ -14,11 +15,15 @@ export interface ApiResult<T> {
 }
 
 async function raw<T>(method: string, path: string, body?: unknown, isRetry = false): Promise<ApiResult<T>> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
   try {
     const isForm = body instanceof FormData;
     const res = await fetch(`${BASE}${path}`, {
       method,
       credentials: "include",
+      signal: controller.signal,
       headers: isForm ? undefined : body ? { "Content-Type": "application/json" } : undefined,
       body: isForm ? body : body ? JSON.stringify(body) : undefined,
     });
@@ -30,19 +35,34 @@ async function raw<T>(method: string, path: string, body?: unknown, isRetry = fa
     }
 
     const text = await res.text();
-    const json = text ? JSON.parse(text) : null;
+    const json = text ? safeJson(text) : null;
 
     if (!res.ok) {
       return {
         data: null,
-        error: json?.message ?? "Une erreur est survenue.",
+        error: json?.message ?? `Erreur serveur (${res.status}).`,
         status: res.status,
         upgradeRequired: json?.upgrade_required === true,
       };
     }
     return { data: json as T, error: null, status: res.status };
+  } catch (error) {
+    const aborted = error instanceof Error && error.name === "AbortError";
+    return {
+      data: null,
+      error: aborted ? "Le serveur met trop de temps a repondre. Reessayez dans un instant." : "Impossible de joindre le serveur.",
+      status: 0,
+    };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function safeJson(text: string): any {
+  try {
+    return JSON.parse(text);
   } catch {
-    return { data: null, error: "Impossible de joindre le serveur.", status: 0 };
+    return null;
   }
 }
 

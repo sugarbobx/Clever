@@ -8,6 +8,7 @@ const nextConfig = {
   // (Renamed from experimental.serverComponentsExternalPackages in Next 15.)
   // bull (spawns child processes) and @anthropic-ai/sdk must not be bundled.
   serverExternalPackages: ["@prisma/client", "bcryptjs", "bull", "@anthropic-ai/sdk"],
+  allowedDevOrigins: ["54.83.205.122"],
 };
 
 export default nextConfig;

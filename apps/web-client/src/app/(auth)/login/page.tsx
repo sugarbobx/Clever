@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { useAuth, homeForRole } from "@/stores/auth.store";
 
 const DEMO_ACCOUNTS = [
@@ -22,9 +22,11 @@ export default function LoginPage() {
   const [email, setEmail] = useState("manager@clever.cm");
   const [password, setPassword] = useState("Manager@1234");
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
     setBusy(true);
     const res = await login(email, password);
     setBusy(false);
@@ -35,7 +37,9 @@ export default function LoginPage() {
       if (isClient && u.onboardingCompleted === false) router.replace("/onboarding");
       else router.replace(homeForRole(u.role));
     } else {
-      toast.error(res.error ?? "Échec de la connexion.");
+      const message = res.error ?? "Echec de la connexion.";
+      setError(message);
+      toast.error(message);
     }
   }
 
@@ -57,7 +61,14 @@ export default function LoginPage() {
             <label className="label">Mot de passe</label>
             <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
-          <button className="btn-primary w-full" disabled={busy}>
+          {error ? (
+            <div role="alert" className="flex items-start gap-2 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+              <AlertCircle size={16} className="mt-0.5 shrink-0" />
+              <span>{error}</span>
+            </div>
+          ) : null}
+
+          <button type="submit" className="btn-primary min-h-10 w-full" disabled={busy}>
             {busy ? <Loader2 size={16} className="animate-spin" /> : "Se connecter"}
           </button>
 
@@ -81,6 +92,7 @@ export default function LoginPage() {
                 onClick={() => {
                   setEmail(a.email);
                   setPassword(a.pw);
+                  setError(null);
                 }}
                 className="rounded-lg border border-border px-3 py-2 text-left text-xs text-slate-300 hover:border-primary hover:bg-surface-2"
               >
