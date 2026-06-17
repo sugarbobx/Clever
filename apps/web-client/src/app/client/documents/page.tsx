@@ -89,6 +89,7 @@ export default function ClientDocumentsPage() {
               <tr>
                 <th className="px-4 py-3 font-semibold">Fournisseur</th>
                 <th className="px-4 py-3 font-semibold">Montant</th>
+                <th className="px-4 py-3 font-semibold">Classification</th>
                 <th className="px-4 py-3 font-semibold">Date</th>
                 <th className="px-4 py-3 font-semibold">Statut</th>
               </tr>
@@ -98,6 +99,16 @@ export default function ClientDocumentsPage() {
                 <tr key={d.id} className="bg-surface/40">
                   <td className="px-4 py-3 font-medium text-slate-100">{d.vendor ?? d.fileName}</td>
                   <td className="px-4 py-3 font-mono text-slate-200">{formatXAF(d.amount)}</td>
+                  <td className="px-4 py-3">
+                    <div className="min-w-40">
+                      <p className="text-xs font-medium text-slate-200">{d.ocrCategory ?? d.sysohadaLabel ?? "A classer"}</p>
+                      <p className={d.ocrMissingFields?.length ? "text-[11px] text-amber-400" : "text-[11px] text-emerald-400"}>
+                        {d.ocrMissingFields?.length
+                          ? `A completer: ${d.ocrMissingFields.join(", ")}`
+                          : `OCR complet ${d.ocrCompleteness ?? 100}%`}
+                      </p>
+                    </div>
+                  </td>
                   <td className="px-4 py-3 text-muted">{formatDate(d.date)}</td>
                   <td className="px-4 py-3">
                     <StatusBadge status={d.status} />

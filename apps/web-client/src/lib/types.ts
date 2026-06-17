@@ -45,6 +45,14 @@ export interface DocumentDTO {
   createdAt: string;
   client?: { id: string; name: string; type: string };
   validation?: { action: string; notes: string | null; validatedBy?: { name: string } } | null;
+  ocrMissingFields?: string[];
+  ocrCategory?: string;
+  ocrCompleteness?: number;
+  suggestedEntry?: {
+    debit: { code: string; label: string; amount: number }[];
+    credit: { code: string; label: string; amount: number };
+    demo: boolean;
+  } | null;
 }
 
 export interface ClientAccountDTO {

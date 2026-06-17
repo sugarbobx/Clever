@@ -41,6 +41,19 @@ type LeftTab = "apercu" | "charges" | "transactions";
 type RightTab = "attente" | "valides" | "upload";
 type Health = "green" | "amber" | "red";
 interface ChatMessage { id: string; content: string; fromStaff: boolean; createdAt: string }
+interface DsfSummary {
+  year: number;
+  readiness: number;
+  status: "PRET" | "A_COMPLETER" | "BROUILLON";
+  balance: { code: string; label: string; debit: number; credit: number; balance: number; demo: boolean }[];
+  statements: {
+    incomeStatement: { products: number; productsDemo: boolean; charges: number; operatingResult: number };
+    cashFlow: { operatingCashFlow: number; demo: boolean };
+    annexes: string[];
+  };
+  checklist: { label: string; done: boolean; demo: boolean }[];
+  demo: boolean;
+}
 
 const monthKey = (d?: string | null) => {
   if (!d) return "";
@@ -155,6 +168,8 @@ function ComptaDashboard() {
 
       {/* §8 — Complétude du dossier */}
       <CompletudeBar month={moisActuel} pct={completude} missing={missing} />
+
+      <DsfPreparationPanel />
 
       {/* §1 — Barre d'état (5 cartes santé) */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
@@ -385,6 +400,93 @@ function ComptaDashboard() {
 }
 
 /* ── §8 Complétude ── */
+function DsfPreparationPanel() {
+  const [data, setData] = useState<DsfSummary | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const { data } = await api.get<DsfSummary>(`/syscohada/dsf?year=${new Date().getFullYear()}`);
+    if (data) setData(data);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  if (loading) return <div className="card h-40 animate-pulse" />;
+  if (!data) return null;
+
+  const readinessColor = data.readiness >= 80 ? "text-emerald-400" : data.readiness >= 50 ? "text-amber-400" : "text-red-400";
+  const topBalance = data.balance.slice(0, 4);
+
+  return (
+    <div className="card">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="flex items-center gap-2 text-sm font-semibold text-slate-200">
+            <Landmark size={15} /> Preparation DSF & etats financiers OHADA <DemoBadge />
+          </p>
+          <p className="mt-1 text-xs text-muted">Bilan, compte de resultat, flux, balance et annexes pour {data.year}.</p>
+        </div>
+        <div className="text-right">
+          <p className={`text-2xl font-bold ${readinessColor}`}>{data.readiness}%</p>
+          <p className="text-[11px] uppercase tracking-wide text-muted">{data.status.replace("_", " ")}</p>
+        </div>
+      </div>
+
+      <div className="grid gap-3 lg:grid-cols-3">
+        <div className="rounded-lg border border-border bg-bg p-3">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">Compte de resultat</p>
+          <div className="space-y-1.5 text-sm">
+            <div className="flex justify-between"><span className="text-muted">Produits</span><span className="font-mono text-slate-100">{formatXAF(data.statements.incomeStatement.products)}</span></div>
+            <div className="flex justify-between"><span className="text-muted">Charges</span><span className="font-mono text-slate-100">{formatXAF(data.statements.incomeStatement.charges)}</span></div>
+            <div className="flex justify-between border-t border-border pt-1.5"><span className="font-semibold text-slate-200">Resultat</span><span className="font-mono font-bold text-primary">{formatXAF(data.statements.incomeStatement.operatingResult)}</span></div>
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-border bg-bg p-3">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">Balance generale</p>
+          {topBalance.length === 0 ? (
+            <p className="text-sm text-muted">Aucune ecriture exploitable.</p>
+          ) : (
+            <div className="space-y-1.5">
+              {topBalance.map((row) => (
+                <div key={row.code} className="flex items-center justify-between gap-2 text-sm">
+                  <span className="truncate text-slate-300"><span className="font-mono text-xs text-muted">{row.code}</span> {row.label}</span>
+                  <span className="font-mono text-xs text-slate-100">{formatXAF(Math.abs(row.balance))}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-lg border border-border bg-bg p-3">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">Checklist DSF</p>
+          <div className="space-y-1.5">
+            {data.checklist.slice(0, 5).map((item) => (
+              <div key={item.label} className="flex items-center justify-between gap-2 text-sm">
+                <span className={item.done ? "text-slate-200" : "text-amber-300"}>{item.label}</span>
+                <span className={item.done ? "text-emerald-400" : "text-amber-400"}>{item.done ? "OK" : "A faire"} {item.demo && <DemoBadge />}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-3 rounded-lg border border-border bg-surface-2 p-3">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">Notes annexes</p>
+        <div className="flex flex-wrap gap-2">
+          {data.statements.annexes.map((note) => (
+            <span key={note} className="rounded-full bg-bg px-2 py-1 text-xs text-slate-300">{note}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CompletudeBar({ month, pct, missing }: { month: string; pct: number; missing: { label: string; href: string }[] }) {
   const color = pct >= 75 ? "bg-emerald-500" : pct >= 50 ? "bg-amber-500" : "bg-red-500";
   return (

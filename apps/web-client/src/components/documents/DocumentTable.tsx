@@ -37,7 +37,9 @@ export function DocumentTable({
             <th className="px-4 py-3 font-semibold">Fournisseur</th>
             <th className="px-4 py-3 font-semibold">Client</th>
             <th className="px-4 py-3 font-semibold">Montant</th>
+            <th className="px-4 py-3 font-semibold">OCR</th>
             <th className="px-4 py-3 font-semibold">SYSCOHADA</th>
+            <th className="px-4 py-3 font-semibold">Ecriture</th>
             <th className="px-4 py-3 font-semibold">Confiance</th>
             <th className="px-4 py-3 font-semibold">Date</th>
             <th className="px-4 py-3 font-semibold">Statut</th>
@@ -63,10 +65,28 @@ export function DocumentTable({
                 <td className="px-4 py-3 text-muted">{d.client?.name ?? "—"}</td>
                 <td className="px-4 py-3 font-mono text-slate-200">{formatXAF(d.amount)}</td>
                 <td className="px-4 py-3">
+                  <div className="min-w-32">
+                    <p className="text-xs font-medium text-slate-200">{d.ocrCategory ?? "A classer"}</p>
+                    <p className={d.ocrMissingFields?.length ? "text-[11px] text-amber-400" : "text-[11px] text-emerald-400"}>
+                      {d.ocrMissingFields?.length ? `${d.ocrMissingFields.length} champ(s) manquant(s)` : "Complet"}
+                    </p>
+                  </div>
+                </td>
+                <td className="px-4 py-3">
                   {d.sysohadaCode ? (
                     <span className="font-mono text-primary">{d.sysohadaCode}</span>
                   ) : (
                     <span className="text-muted">—</span>
+                  )}
+                </td>
+                <td className="px-4 py-3">
+                  {d.suggestedEntry ? (
+                    <div className="min-w-36 text-[11px] text-muted">
+                      <p className="truncate">D {d.suggestedEntry.debit.map((x) => x.code).join(" + ")}</p>
+                      <p className="truncate">C {d.suggestedEntry.credit.code}</p>
+                    </div>
+                  ) : (
+                    <span className="text-muted">-</span>
                   )}
                 </td>
                 <td className="px-4 py-3">

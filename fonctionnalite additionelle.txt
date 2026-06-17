@@ -1,5 +1,28 @@
 Fonctionnalites additionnelles recommandees pour CLEVER
 
+Etat d'avancement
+Livré dans le code:
+1. Calendrier fiscal intelligent Cameroun
+2. Assistant de conformite fiscale
+3. Preparation DSF et etats financiers OHADA
+4. OCR factures et classement automatique
+
+Implémenté en mode démo test:
+- Integration WhatsApp
+- Paiements Mobile Money
+- Workflow cabinet
+- Mode multi-entreprises et groupe
+- Scoring de risque fiscal
+- Generateur de documents
+- Dashboard dirigeant
+
+Prochaine etape
+4. Portail client ultra simple
+Travail a faire ensuite:
+- interface client non-comptable avec documents a fournir, statut du dossier, messages, echeances et bouton d'envoi de document
+- garder une experience simple et mobile-first
+- reutiliser les composants existants du portail client sans casser la logique actuelle
+
 Objectif general
 Faire de CLEVER un copilote fiscal, comptable et operationnel adapte au marche camerounais, pour les cabinets, PME, entrepreneurs et particuliers.
 
@@ -57,3 +80,6 @@ Priorites recommandees
 3. Preparation DSF et SYSCOHADA.
 4. Workflow cabinet avec validation manager.
 5. Paiement Mobile Money et facturation abonnement.
+
+Note de suivi
+Les fonctionnalites complexes non finalisees en code restent a traiter en demo test avant passage a une version complete.

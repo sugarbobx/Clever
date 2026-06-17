@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/stores/auth.store";
-import { formatXAF } from "@/lib/format";
+import { formatDate, formatXAF } from "@/lib/format";
 import { DemoBadge } from "@/components/ui/Misc";
 
 export default function TaxPage() {
@@ -42,6 +42,30 @@ interface ChatMessage {
   content: string;
   fromStaff: boolean;
   createdAt: string;
+}
+
+interface FiscalCompliance {
+  clientType: string;
+  regime: string;
+  demo: boolean;
+  deadlines: {
+    id: string;
+    label: string;
+    obligation: string;
+    dueDate: string;
+    daysLeft: number;
+    level: "red" | "amber" | "blue";
+    channels: string[];
+    demo: boolean;
+  }[];
+  compliance: {
+    score: number;
+    riskScore: number;
+    riskLevel: "CRITIQUE" | "A_SURVEILLER" | "OK";
+    missingPieces: string[];
+    actions: string[];
+    summary: string;
+  };
 }
 
 type Tab = "calcul" | "revenus" | "declarations";
@@ -119,6 +143,8 @@ function FiscalDashboard() {
         <Metric label="Conformité" value="100%" icon={<ShieldCheck size={16} />} demo />
         <Metric label="Prochaine échéance" value="12 j" icon={<CalendarClock size={16} />} demo />
       </div>
+
+      <FiscalCompliancePanel />
 
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Gauche — simulation IRPP */}
@@ -384,12 +410,133 @@ function LegalChip({ source }: { source: string }) {
 /* ───────────────── Comptabilité — Client Entreprise (TVA/IS, inchangé) ───────────────── */
 function CompanyTaxView() {
   return (
-    <div>
+    <div className="space-y-6">
       <h1 className="mb-1 text-2xl font-bold tracking-tight text-white">Simulateur fiscal</h1>
       <p className="mb-6 text-sm text-muted">
         Estimez votre TVA et votre impôt sur les sociétés. <span className="text-xs">(estimation indicative)</span>
       </p>
+      <FiscalCompliancePanel />
       <VatSimulator />
+    </div>
+  );
+}
+
+function FiscalCompliancePanel() {
+  const [data, setData] = useState<FiscalCompliance | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const { data, error } = await api.get<FiscalCompliance>("/tax/compliance");
+    if (error) setError(error);
+    else setData(data!);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  if (loading) {
+    return (
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="card h-36 animate-pulse" />
+        <div className="card h-36 animate-pulse lg:col-span-2" />
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+        Impossible de charger l'assistant fiscal. {error}
+      </div>
+    );
+  }
+
+  const score = data.compliance.score;
+  const scoreColor = score >= 75 ? "text-emerald-400" : score >= 50 ? "text-amber-400" : "text-red-400";
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-3">
+      <div className="card">
+        <div className="mb-3 flex items-center justify-between">
+          <p className="flex items-center gap-2 text-sm font-semibold text-slate-200">
+            <ShieldCheck size={15} /> Assistant conformite
+          </p>
+          <DemoBadge />
+        </div>
+        <p className={`text-3xl font-bold ${scoreColor}`}>{score}%</p>
+        <p className="mt-1 text-xs text-muted">{data.regime}</p>
+        <p className="mt-3 rounded-lg bg-surface-2 px-3 py-2 text-sm text-slate-300">{data.compliance.summary}</p>
+      </div>
+
+      <div className="card lg:col-span-2">
+        <div className="mb-3 flex items-center justify-between">
+          <p className="flex items-center gap-2 text-sm font-semibold text-slate-200">
+            <CalendarClock size={15} /> Calendrier fiscal Cameroun
+          </p>
+          <span className="text-xs text-muted">Rappels WhatsApp + email <DemoBadge /></span>
+        </div>
+        <div className="grid gap-2 md:grid-cols-2">
+          {data.deadlines.slice(0, 4).map((item) => {
+            const cls =
+              item.level === "red"
+                ? "border-red-500/30 bg-red-500/10 text-red-300"
+                : item.level === "amber"
+                  ? "border-amber-500/30 bg-amber-500/10 text-amber-300"
+                  : "border-blue-500/30 bg-blue-500/10 text-blue-300";
+            return (
+              <div key={item.id} className={`rounded-lg border px-3 py-2 ${cls}`}>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium">{item.label}</p>
+                    <p className="text-[11px] opacity-80">
+                      {formatDate(item.dueDate)} - {item.channels.join(" + ")}
+                    </p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-black/10 px-2 py-0.5 text-[10px] font-semibold">
+                    J-{Math.max(0, item.daysLeft)}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="card lg:col-span-3">
+        <div className="mb-3 flex items-center justify-between">
+          <p className="flex items-center gap-2 text-sm font-semibold text-slate-200">
+            <AlertTriangle size={15} /> Actions prioritaires
+          </p>
+          <span className="text-xs text-muted">Risque {data.compliance.riskScore}/100</span>
+        </div>
+        <div className="grid gap-3 lg:grid-cols-2">
+          <div>
+            <p className="label">Pieces a fournir</p>
+            <ul className="space-y-1.5">
+              {data.compliance.missingPieces.map((piece) => (
+                <li key={piece} className="rounded-lg border border-border bg-bg px-3 py-2 text-sm text-slate-300">
+                  {piece}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="label">Prochaines actions</p>
+            <ul className="space-y-1.5">
+              {data.compliance.actions.map((action) => (
+                <li key={action} className="rounded-lg border border-border bg-bg px-3 py-2 text-sm text-slate-300">
+                  {action}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
