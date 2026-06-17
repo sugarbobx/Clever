@@ -29,11 +29,14 @@ export function verifyRefreshToken(token: string): { sub: string } {
   return jwt.verify(token, env.JWT_REFRESH_SECRET) as { sub: string };
 }
 
+const secureCookies =
+  env.NODE_ENV === "production" && process.env.COOKIE_SECURE !== "false";
+
 /** httpOnly cookie options (no Secure in dev so localhost works over http). */
 export const accessCookieOpts = {
   httpOnly: true as const,
   sameSite: "lax" as const,
-  secure: env.NODE_ENV === "production",
+  secure: secureCookies,
   maxAge: 15 * 60 * 1000,
   path: "/",
 };
@@ -41,7 +44,7 @@ export const accessCookieOpts = {
 export const refreshCookieOpts = {
   httpOnly: true as const,
   sameSite: "lax" as const,
-  secure: env.NODE_ENV === "production",
+  secure: secureCookies,
   maxAge: 7 * 24 * 60 * 60 * 1000,
   path: "/",
 };

@@ -1,0 +1,59 @@
+Fonctionnalites additionnelles recommandees pour CLEVER
+
+Objectif general
+Faire de CLEVER un copilote fiscal, comptable et operationnel adapte au marche camerounais, pour les cabinets, PME, entrepreneurs et particuliers.
+
+1. Calendrier fiscal intelligent Cameroun
+Alertes automatiques pour TVA, IRPP, patente, DSF, CNPS, impot liberatoire, acomptes, retenues a la source et autres echeances.
+Les echeances doivent etre personnalisees selon le regime fiscal, le type de client et les obligations du dossier.
+
+2. Assistant de conformite fiscale
+Module qui indique ce qui manque, le niveau de risque, les prochaines actions et les pieces a fournir.
+L'objectif est de reduire le stress fiscal du client et d'aider le cabinet a prioriser les dossiers.
+
+3. Preparation DSF et etats financiers OHADA
+Generation guidee des etats financiers SYSCOHADA : bilan, compte de resultat, tableau des flux, notes annexes, balance et grand livre.
+Le module doit aider a preparer les obligations annuelles et les rapports comptables conformes au contexte OHADA.
+
+4. OCR factures et classement automatique
+Upload de photos ou PDF, extraction automatique du fournisseur, montant, TVA, date et categorie comptable.
+Le systeme doit proposer une ecriture comptable et signaler les informations manquantes.
+
+5. Integration WhatsApp
+Permettre aux clients d'envoyer des factures, recus et documents via WhatsApp.
+CLEVER doit rattacher automatiquement les documents au bon dossier, notifier le cabinet et demander les informations manquantes.
+
+6. Paiements Mobile Money
+Integration MTN Mobile Money et Orange Money pour les abonnements, avances fiscales, factures cabinet et relances de paiement.
+Cette fonctionnalite est importante pour l'adoption locale.
+
+7. Portail client ultra simple
+Interface client non-comptable avec documents a fournir, statut du dossier, messages, echeances, montant a payer et bouton d'envoi de document.
+L'experience doit rester simple et mobile-first.
+
+8. Workflow cabinet
+File d'attente par collaborateur, attribution de taches, SLA, validation manager, commentaires internes et historique d'audit.
+Ce module doit aider THECLEVEREST a scaler ses operations internes.
+
+9. Mode multi-entreprises et groupe
+Un meme utilisateur doit pouvoir gerer plusieurs entites : SARL, etablissement, commerce, association, immobilier ou autres activites.
+Chaque entite doit avoir ses propres obligations, documents, fiscalite et tableaux de bord.
+
+10. Scoring de risque fiscal
+Score simple base sur les declarations manquantes, justificatifs incomplets, TVA incoherente, retards de paiement, anomalies depenses/recettes et DSF non prete.
+Le score doit aider a identifier rapidement les dossiers critiques.
+
+11. Generateur de documents
+Generation d'attestations, lettres fiscales, demandes d'immatriculation, courriers DGI, fiches client, rapports mensuels, proces-verbaux simples et mandats.
+Les modeles doivent etre personnalisables par le cabinet.
+
+12. Dashboard dirigeant
+Tableau de bord oriente decision : cash disponible, dettes fiscales, ventes estimees, depenses, marge, echeances, documents bloquants et actions urgentes.
+Il doit parler le langage du dirigeant, pas seulement celui du comptable.
+
+Priorites recommandees
+1. Calendrier fiscal avec rappels WhatsApp et email.
+2. OCR documents avec classification comptable.
+3. Preparation DSF et SYSCOHADA.
+4. Workflow cabinet avec validation manager.
+5. Paiement Mobile Money et facturation abonnement.
